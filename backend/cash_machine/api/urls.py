@@ -16,5 +16,5 @@ urlpatterns = [
     path(
         "redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
     ),
-    path('cash_machine/', CashMachineView.as_view(), name='cash_machine'),
+    path("cash_machine/", CashMachineView.as_view(), name="cash_machine"),
 ]
