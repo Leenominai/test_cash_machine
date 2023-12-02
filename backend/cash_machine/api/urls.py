@@ -1,9 +1,10 @@
 from django.urls import path
 from drf_spectacular.views import (
     SpectacularAPIView,
-    SpectacularSwaggerView,
     SpectacularRedocView,
+    SpectacularSwaggerView,
 )
+
 from .views import CashMachineView
 
 urlpatterns = [
@@ -16,5 +17,10 @@ urlpatterns = [
     path(
         "redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
     ),
-    path("cash_machine/", CashMachineView.as_view(), name="cash_machine"),
+    path("cash_machine", CashMachineView.as_view(), name="cash_machine"),
+    path(
+        "cash_machine/<str:file_name>/",
+        CashMachineView.as_view(),
+        name="cash_machine",
+    ),
 ]
