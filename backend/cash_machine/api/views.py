@@ -67,7 +67,7 @@ class CashMachineView(APIView):
             # Пример: Сохранение чека в PDF
             pdf_file_path = f"media/check_{current_time.replace(':', '_').replace(' ', '_')}.pdf"
             pdfkit_config = pdfkit.configuration(
-                wkhtmltopdf=settings.WKHTMLTOPDF
+                wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_DOCKER_PATH
             )
             pdfkit.from_string(
                 rendered_html, pdf_file_path, configuration=pdfkit_config

@@ -134,4 +134,5 @@ LOGGING = {
     },
 }
 
-WKHTMLTOPDF = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+WKHTMLTOPDF_LOCAL_PATH = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+WKHTMLTOPDF_LOCAL_DOCKER_PATH = "/usr/bin/wkhtmltopdf"
