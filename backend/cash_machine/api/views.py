@@ -11,12 +11,12 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from jinja2 import Environment, FileSystemLoader
-from receipts.models import Item
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .decorators import check_post_schema, qrcode_get_schema
+from receipts.models import Item  # noqa
 
 logger = logging.getLogger(__name__)
 

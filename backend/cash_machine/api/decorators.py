@@ -1,15 +1,16 @@
 from drf_spectacular.utils import (
+    OpenApiParameter,
     OpenApiResponse,
-    extend_schema, extend_schema_view, OpenApiParameter,
+    extend_schema,
+    extend_schema_view,
 )
 
 from .serializers import (
-    ItemSerializer,
     BadRequestErrorSerializer,
-    NotFoundErrorSerializer,
     InternalServerErrorSerializer,
+    ItemSerializer,
+    NotFoundErrorSerializer,
 )
-
 
 check_post_schema = extend_schema_view(
     post=extend_schema(
