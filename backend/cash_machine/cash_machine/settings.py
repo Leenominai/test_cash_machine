@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "jinja2",
     "api.apps.ApiConfig",
-    "checks.apps.ChecksConfig",
+    "receipts.apps.ReceiptsConfig",
 ]
 
 MIDDLEWARE = [
@@ -47,7 +47,9 @@ REST_FRAMEWORK = {
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

@@ -4,38 +4,27 @@ import os
 
 import pdfkit
 import qrcode
-from checks.models import Item
 from django.conf import settings
-from django.http import Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_list_or_404
 from django.template.loader import render_to_string
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from jinja2 import Environment, FileSystemLoader
+from receipts.models import Item
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import ItemSerializer
+from .decorators import check_post_schema, qrcode_get_schema
 
 logger = logging.getLogger(__name__)
 
 
+@extend_schema(tags=["Чек - генерация QR-кода"])
+@check_post_schema
 class CashMachineView(APIView):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    @extend_schema(
-        request=ItemSerializer(many=True),
-        responses={
-            200: "image/png",
-            400: "Error",
-            404: "Not Found",
-            500: "Internal Server Error",
-        },
-    )
+    @csrf_exempt
     def post(self, request):
         try:
             items_ids = request.data.get("items", [])
@@ -53,16 +42,15 @@ class CashMachineView(APIView):
                 total_price += item_data["price"]
                 items_data.append(item_data)
 
-            # HTML-шаблон чека
-            receipt_template_path = os.path.join(
-                settings.BASE_DIR, "api", "templates", "receipt.html"
-            )
+            # Получаем текущее время в локальном часовом поясе
+            current_time = datetime.datetime.now()
 
-            current_time = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+            # Форматируем текущее время
+            current_time = current_time.strftime("%d.%m.%Y %H:%M")
 
             # Получаем HTML-код из Django-шаблона
             html_content = render_to_string(
-                receipt_template_path,
+                "receipt.html",
                 {
                     "items": items,
                     "total_price": total_price,
@@ -116,6 +104,11 @@ class CashMachineView(APIView):
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
+@extend_schema(tags=["Чек - сканирование QR-кода"])
+@qrcode_get_schema
+class QRCodeFileView(APIView):
+    @csrf_exempt
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -131,18 +124,16 @@ class CashMachineView(APIView):
     def get(self, request, file_name):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-            with open(file_path, "rb") as file:
-                response = HttpResponse(
-                    file.read(), content_type="application/pdf"
+            if os.path.exists(file_path):
+                # Если файл существует, отправляем его как ответ
+                return FileResponse(
+                    open(file_path, "rb"), content_type="application/pdf"
                 )
-                response[
-                    "Content-Disposition"
-                ] = f'inline; filename="{file_name}"'
-                return response
-        except FileNotFoundError:
-            return Response(
-                {"error": "File not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            else:
+                return Response(
+                    {"error": "File not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
         except Exception as e:
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR

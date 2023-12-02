@@ -5,22 +5,24 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from .views import CashMachineView
+from .views import CashMachineView, QRCodeFileView
 
 urlpatterns = [
-    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "swagger-ui/",
+        "api/v1/swagger-ui/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
     path(
-        "redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
+        "api/v1/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
     ),
     path("cash_machine", CashMachineView.as_view(), name="cash_machine"),
     path(
-        "cash_machine/<str:file_name>/",
-        CashMachineView.as_view(),
-        name="cash_machine",
+        "media/<str:file_name>/",
+        QRCodeFileView.as_view(),
+        name="qr_code_file",
     ),
 ]
