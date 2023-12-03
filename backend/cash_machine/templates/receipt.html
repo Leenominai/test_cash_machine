@@ -37,21 +37,27 @@
     <table>
         <thead>
             <tr>
-                <th>Наим.</th>
+                <th>Наименование товара</th>
                 <th>Кол-во</th>
-                <th>Стоимость</th>
+                <th>Цена за единицу</th>
+                <th>Общая сумма</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
             <tr>
                 <td>{{ item.title }}</td>
-                <td>{{ item.quantity|default:1 }}</td>
+                <td>{{ item.quantity }}</td>
                 <td>{{ item.price }}</td>
+                <td>{{ item.total_item_price }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <p class="total">Итого: {{ total_price }}</p>
+    <p>Форма оплаты: {{ payment_method }}</p>
+    <p>Чек выдан: {{ customer_name }}</p>
+    <p>Подпись покупателя:</p>
+    <img src="data:image/png;base64,{{ signature }}" alt="Подпись покупателя">
 </body>
 </html>

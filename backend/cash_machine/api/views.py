@@ -25,14 +25,33 @@ logger = logging.getLogger(__name__)
 @check_post_schema
 class CashMachineView(APIView):
     @csrf_exempt
-    def generate_html_content(self, items, total_price, current_time):
+    def generate_html_content(self, items, current_time):
         """Генерирует HTML-код для чека."""
+        payment_method = "Наличные"
+        customer_name = "Прекрасный покупатель"
+
+        total_price = sum(item.price for item in items)
+
+        items_data = []
+        quantity = 1
+
+        for item in items:
+            item_data = {
+                "title": item.title,
+                "price": item.price,
+                "quantity": quantity,
+                "total_item_price": item.price * quantity,
+            }
+            items_data.append(item_data)
+
         html_content = render_to_string(
             "receipt.html",
             {
-                "items": items,
+                "items": items_data,
                 "total_price": total_price,
                 "current_time": current_time,
+                "payment_method": payment_method,
+                "customer_name": customer_name,
             },
         )
 
@@ -91,7 +110,6 @@ class CashMachineView(APIView):
     @csrf_exempt
     def create_qrcode_receipt(self, request, pdf_file_path):
         """Создаёт чек в формате QR-code."""
-
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -114,18 +132,6 @@ class CashMachineView(APIView):
             items_ids = request.data.get("items", [])
             items = get_list_or_404(Item, id__in=items_ids)
 
-            # Логика формирования чека
-            total_price = 0
-            items_data = []
-
-            for item in items:
-                item_data = {
-                    "title": item.title,
-                    "price": item.price,
-                }
-                total_price += item_data["price"]
-                items_data.append(item_data)
-
             # Получаем текущее время в локальном часовом поясе
             current_time = datetime.datetime.now()
 
@@ -133,7 +139,7 @@ class CashMachineView(APIView):
             current_time = current_time.strftime("%d.%m.%Y %H:%M")
 
             rendered_html = self.generate_html_content(
-                items, total_price, current_time
+                items, current_time
             )
 
             pdf_file_path = self.create_pdf_receipt(
