@@ -93,12 +93,12 @@ class CashMachineView(APIView):
 
         # Создаём файл чека
         pdf_file_path = f"media/check_{current_time}{prefix}.pdf"
-        # pdfkit_config = pdfkit.configuration(
-        #     wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
-        # )
         pdfkit_config = pdfkit.configuration(
-            wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+            wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
         )
+        # pdfkit_config = pdfkit.configuration(
+        #     wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+        # )
         pdfkit.from_string(
             rendered_html, pdf_file_path, configuration=pdfkit_config, options=pdfkit_options
         )
