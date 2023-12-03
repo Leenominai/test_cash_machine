@@ -67,7 +67,7 @@ class CashMachineView(APIView):
             # Пример: Сохранение чека в PDF
             pdf_file_path = f"media/check_{current_time.replace(':', '_').replace(' ', '_')}.pdf"
             pdfkit_config = pdfkit.configuration(
-                wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_DOCKER_PATH
+                wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
             )
             pdfkit.from_string(
                 rendered_html, pdf_file_path, configuration=pdfkit_config
@@ -108,24 +108,31 @@ class CashMachineView(APIView):
 @extend_schema(tags=["Чек - сканирование QR-кода"])
 @qrcode_get_schema
 class QRCodeFileView(APIView):
+    """
+    Вьюсет для получения файла по его имени через сканирование QR-кода.
+
+    Methods:
+        get(self, request, file_name): Обработка GET-запроса. Возвращает файл в ответ на запрос.
+
+    """
     @csrf_exempt
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="file_name", type=str, location=OpenApiParameter.PATH
-            )
-        ],
-        responses={
-            200: "application/pdf",
-            404: "Not Found",
-            500: "Internal Server Error",
-        },
-    )
     def get(self, request, file_name):
+        """
+        Обработка GET-запроса для получения файла.
+
+        Args:
+            request (Request): Объект запроса Django.
+            file_name (str): Имя файла, которое передается в URL.
+
+        Returns:
+            Response: Возвращает файл в ответ на запрос.
+
+        Raises:
+            Response: В случае ошибки возвращает соответствующий HTTP-ответ с сообщением об ошибке.
+        """
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, file_name)
             if os.path.exists(file_path):
-                # Если файл существует, отправляем его как ответ
                 return FileResponse(
                     open(file_path, "rb"), content_type="application/pdf"
                 )
