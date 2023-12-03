@@ -16,7 +16,9 @@ def test_title_max_length():
     with pytest.raises(ValidationError) as exc_info:
         item = Item.objects.create(title="A" * 256, price=10.99)
         item.full_clean()  # Явно вызываем валидацию
-    assert "Ensure this value has at most 255 characters" in str(exc_info.value)
+    assert "Ensure this value has at most 255 characters" in str(
+        exc_info.value
+    )
 
 
 # @pytest.mark.django_db
