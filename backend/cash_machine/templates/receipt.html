@@ -2,15 +2,43 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Чек</title>
+    <title>Кассовый чек</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            margin-top: 10px;
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Чек</h1>
+    <h1>Кассовый чек</h1>
     <p>Время создания чека: {{ current_time }}</p>
     <table>
         <thead>
             <tr>
-                <th>Наименование</th>
+                <th>Наим.</th>
+                <th>Кол-во</th>
                 <th>Стоимость</th>
             </tr>
         </thead>
@@ -18,11 +46,12 @@
             {% for item in items %}
             <tr>
                 <td>{{ item.title }}</td>
-                <td>{{ item.price}}</td>
+                <td>{{ item.quantity|default:1 }}</td>
+                <td>{{ item.price }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <p><b>Итого:</b> {{ total_price }}</p>
+    <p class="total">Итого: {{ total_price }}</p>
 </body>
 </html>

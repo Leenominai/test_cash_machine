@@ -64,6 +64,14 @@ class CashMachineView(APIView):
         # Формируем префикс для имени файла
         prefix = "_" + str(count + 1)
 
+        pdfkit_options = {
+            'page-size': 'A7',  # Размер страницы A7 соответствует стандартной ширине кассового чека
+            'margin-top': '5mm',
+            'margin-right': '5mm',
+            'margin-bottom': '5mm',
+            'margin-left': '5mm',
+        }
+
         # Создаём файл чека
         pdf_file_path = f"media/check_{current_time}{prefix}.pdf"
         # pdfkit_config = pdfkit.configuration(
@@ -73,7 +81,7 @@ class CashMachineView(APIView):
             wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
         )
         pdfkit.from_string(
-            rendered_html, pdf_file_path, configuration=pdfkit_config
+            rendered_html, pdf_file_path, configuration=pdfkit_config, options=pdfkit_options
         )
 
         logger.info("Файл чека в формате .pdf успешно сгенерирован.")
