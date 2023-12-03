@@ -37,7 +37,7 @@ jobs:
   deploy:
     name: Deploy to server
     runs-on: ubuntu-22.04
-    needs:
+#    needs:
 #      - build_and_push_backend_to_docker_hub
 
     steps:
