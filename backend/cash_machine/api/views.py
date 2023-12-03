@@ -11,12 +11,12 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import extend_schema
 from jinja2 import Environment, FileSystemLoader
-from receipts.models import Item  # noqa
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .decorators import check_post_schema, qrcode_get_schema
+from receipts.models import Item  # noqa
 
 logger = logging.getLogger(__name__)
 
@@ -84,11 +84,11 @@ class CashMachineView(APIView):
         prefix = "_" + str(count + 1)
 
         pdfkit_options = {
-            'page-size': 'A7',  # Размер страницы A7 соответствует стандартной ширине кассового чека
-            'margin-top': '5mm',
-            'margin-right': '5mm',
-            'margin-bottom': '5mm',
-            'margin-left': '5mm',
+            "page-size": "A7",  # Размер страницы A7 соответствует стандартной ширине кассового чека
+            "margin-top": "5mm",
+            "margin-right": "5mm",
+            "margin-bottom": "5mm",
+            "margin-left": "5mm",
         }
 
         # Создаём файл чека
@@ -100,7 +100,10 @@ class CashMachineView(APIView):
         #     wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
         # )
         pdfkit.from_string(
-            rendered_html, pdf_file_path, configuration=pdfkit_config, options=pdfkit_options
+            rendered_html,
+            pdf_file_path,
+            configuration=pdfkit_config,
+            options=pdfkit_options,
         )
 
         logger.info("Файл чека в формате .pdf успешно сгенерирован.")
@@ -138,9 +141,7 @@ class CashMachineView(APIView):
             # Форматируем текущее время
             current_time = current_time.strftime("%d.%m.%Y %H:%M")
 
-            rendered_html = self.generate_html_content(
-                items, current_time
-            )
+            rendered_html = self.generate_html_content(items, current_time)
 
             pdf_file_path = self.create_pdf_receipt(
                 current_time, rendered_html
