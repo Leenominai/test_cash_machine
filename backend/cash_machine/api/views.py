@@ -93,12 +93,12 @@ class CashMachineView(APIView):
 
         # Создаём файл чека
         pdf_file_path = f"media/check_{current_time}{prefix}.pdf"
-        pdfkit_config = pdfkit.configuration(
-            wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
-        )
         # pdfkit_config = pdfkit.configuration(
-        #     wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+        #     wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
         # )
+        pdfkit_config = pdfkit.configuration(
+            wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+        )
         pdfkit.from_string(
             rendered_html,
             pdf_file_path,
@@ -201,9 +201,8 @@ class QRCodeFileView(APIView):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, file_name)
             if os.path.exists(file_path):
-                return FileResponse(
-                    open(file_path, "rb"), content_type="application/pdf"
-                )
+                with open(file_path, "rb") as file:
+                    return FileResponse(file, content_type="application/pdf")
             else:
                 return Response(
                     {"error": "File not found"},

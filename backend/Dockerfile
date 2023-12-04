@@ -8,7 +8,7 @@ COPY poetry.lock pyproject.toml entrypoint.sh ./
 
 RUN poetry config virtualenvs.create false && poetry install --without test --no-interaction --no-ansi
 
-RUN apt-get update && apt-get install -y wkhtmltopdf
+#RUN apt-get update && apt-get install -y wkhtmltopdf
 
 COPY cash_machine /backend
 
