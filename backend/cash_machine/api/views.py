@@ -1,9 +1,9 @@
 import datetime
 import logging
 import os
-
 import pdfkit
 import qrcode
+
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse, HttpRequest
 from django.shortcuts import get_list_or_404
@@ -50,7 +50,7 @@ class CashMachineView(APIView):
     """
 
     @csrf_exempt
-    def post(self, request: HttpRequest) -> HttpResponse:
+    def post(self, request):
         """
         Обработка POST-запроса для генерации QR-кода чека.
 
@@ -226,7 +226,9 @@ class CashMachineView(APIView):
         return pdf_file_path
 
     @csrf_exempt
-    def create_qrcode_receipt(self, request: HttpRequest, pdf_file_path: str) -> Image:
+    def create_qrcode_receipt(
+        self, request: HttpRequest, pdf_file_path: str
+    ) -> Image:
         """
         Создаёт чек в формате QR-code.
 
