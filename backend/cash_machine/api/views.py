@@ -16,14 +16,18 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .decorators import check_post_schema, qrcode_get_schema
+from .decorators import (
+    check_post_schema,
+    qrcode_get_schema,
+    create_items_post_schema,
+)
 from receipts.models import Item
 
 
 logger = logging.getLogger(__name__)
 
 
-@extend_schema(tags=["Чек - генерация QR-кода"])
+@extend_schema(tags=["Кассовый чек - генерация QR-кода"])
 @check_post_schema
 class CashMachineView(APIView):
     """
@@ -259,7 +263,7 @@ class CashMachineView(APIView):
         return img
 
 
-@extend_schema(tags=["Чек - сканирование QR-кода"])
+@extend_schema(tags=["Кассовый чек - сканирование QR-кода"])
 @qrcode_get_schema
 class QRCodeFileView(APIView):
     """
@@ -303,6 +307,8 @@ class QRCodeFileView(APIView):
             )
 
 
+@extend_schema(tags=["БД - заполнение базы данных (при необходимости)"])
+@create_items_post_schema
 class CreateItemsView(APIView):
     """
     Эндпоинт для загрузки товаров в базу данных.
