@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from .decorators import check_post_schema, qrcode_get_schema
 from receipts.models import Item
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,10 +67,7 @@ class CashMachineView(APIView):
             items_ids = request.data.get("items", [])
             items = get_list_or_404(Item, id__in=items_ids)
 
-            # Получаем текущее время в локальном часовом поясе
             current_time = datetime.datetime.now()
-
-            # Форматируем текущее время
             current_time = current_time.strftime("%d.%m.%Y %H:%M")
 
             rendered_html = self.generate_html_content(items, current_time)
@@ -78,10 +76,8 @@ class CashMachineView(APIView):
                 current_time, rendered_html
             )
 
-            # Пример: Создание QR-кода и сохранение его в media
             img = self.create_qrcode_receipt(request, pdf_file_path)
 
-            # Подготовка ответа с изображением QR-кода
             response = HttpResponse(content_type="image/png")
             img.save(response, "PNG")
 
@@ -304,4 +300,75 @@ class QRCodeFileView(APIView):
         except Exception as e:
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class CreateItemsView(APIView):
+    """
+    Эндпоинт для загрузки товаров в базу данных.
+
+    Parameters:
+        data (list): Список товаров, каждый из которых представлен словарем
+        с ключами "title" и "price".
+
+    Returns:
+        HttpResponse: Сообщение о статусе операции.
+
+    Raises:
+        Http404: Ошибка, если один или несколько товаров не найдены.
+        Exception: В случае непредвиденной ошибки.
+
+    Пример POST-запроса:
+        [
+            {"id": 1, "title": "Макароны", "price": 80},
+            {"id": 2, "title": "Огурцы", "price": 60},
+            {"id": 3, "title": "Картошка", "price": 50}
+        ]
+    """
+
+    @csrf_exempt
+    def post(self, request):
+        try:
+            items_data = request.data
+            created_item_ids = []
+            errors = []
+
+            for item_data in items_data:
+                item_id = item_data.get("id")
+                title = item_data.get("title")
+                price = item_data.get("price")
+
+                if not title or not price:
+                    errors.append(
+                        {"error": "Название и цена товара обязательны"}
+                    )
+                    continue
+
+                existing_item = Item.objects.filter(id=item_id).first()
+                if existing_item:
+                    errors.append(
+                        {"error": f"Товар с id {item_id} уже существует"}
+                    )
+                    continue
+
+                Item.objects.create(id=item_id, title=title, price=price)
+                created_item_ids.append(item_id)
+
+            if errors:
+                logger.error(f"Ошибки при создании товаров: {errors}")
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+            response_data = {"items": created_item_ids}
+            logger.info(f"Товары успешно созданы: {created_item_ids}")
+            return Response(
+                response_data,
+                status=status.HTTP_201_CREATED,
+                content_type="application/json",
+            )
+
+        except Exception as e:
+            logger.exception(f"Произошла непредвиденная ошибка: {e}")
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

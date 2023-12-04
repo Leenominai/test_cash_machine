@@ -118,3 +118,49 @@ class QRCodeFileViewTest(APITestCase):
         pdf_file_path = "media/test_case.pdf"
         if os.path.exists(pdf_file_path):
             os.remove(pdf_file_path)
+
+
+class CreateItemsViewTest(APITestCase):
+    """
+    Тесты для проверки функциональности эндпоинта "api/v1/create_items/".
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Установка данных для всего класса тестов.
+
+        Создаются тестовые объекты Item.
+
+        Attributes:
+            cls.data = [
+                {"id": 1, "title": "Макароны", "price": 80},
+                {"id": 2, "title": "Огурцы", "price": 60},
+                {"id": 3, "title": "Картошка", "price": 50}
+            ]
+        """
+        super().setUpClass()
+        cls.data = [
+            {"id": 1, "title": "Макароны", "price": 80},
+            {"id": 2, "title": "Огурцы", "price": 60},
+            {"id": 3, "title": "Картошка", "price": 50},
+        ]
+
+    def test_create_items_view(self):
+        """
+        Тест для проверки функциональности эндпоинта "api/v1/create_items/".
+
+        Отправляет POST-запрос на эндпоинт с данными о товарах. Проверяет,
+        что ответ имеет статус 201 Created и содержит правильные id товаров.
+        """
+        url = reverse("create_items")
+        response = self.client.post(url, self.data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response_data = response.data
+        self.assertIn("items", response_data)
+
+        created_item_ids = response_data["items"]
+        expected_item_ids = [item["id"] for item in self.data]
+        self.assertEqual(created_item_ids, expected_item_ids)
