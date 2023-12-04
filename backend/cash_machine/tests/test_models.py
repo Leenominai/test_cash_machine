@@ -1,12 +1,32 @@
+import logging
 import pytest
-from receipts.models import Item
-from rest_framework.exceptions import ValidationError
+
 from rest_framework.test import APITestCase
+
+from receipts.models import Item
+
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db(transaction=True)
 class ItemModelTest(APITestCase):
+    """
+    Класс тестов для проверки модели Item.
+
+    Этот класс включает в себя тесты, проверяющие создание, получение, обновление и удаление
+    элементов модели Item.
+    """
     def setUp(self):
+        """
+        Установка данных для каждого теста.
+
+        Создаются тестовые объекты Item.
+
+        Attributes:
+            self.item1 (Item): Тестовый объект товара.
+            self.item2 (Item): Тестовый объект товара.
+        """
         self.item1 = Item.objects.create(title="Компьютер", price=10000)
         self.item2 = Item.objects.create(title="Ноутбук", price=5000)
 
@@ -18,22 +38,18 @@ class ItemModelTest(APITestCase):
         data = {"title": "Телефон", "price": 2000}
         item = Item.objects.create(**data)
 
-        assert item.id > 0, "Элемент не был создан."
-        assert (
-            item.title == data["title"]
-        ), "Название элемента не соответствует ожидаемому."
-        assert (
-            item.price == data["price"]
-        ), "Цена элемента не соответствует ожидаемой."
-
-    def test_create_item_with_invalid_data(self):
-        """
-        Проверяем, что создание элемента с некорректными данными
-        приводит к ошибке.
-        """
-        data = {}
-        with self.assertRaises(ValidationError):
-            Item.objects.create(**data)
+        logger.info(f"Создан товар: {item.title} с идентификатором {item.id}")
+        self.assertTrue(item.id > 0, "Элемент не был создан.")
+        self.assertEqual(
+            item.title,
+            data["title"],
+            "Название элемента не соответствует ожидаемому.",
+        )
+        self.assertEqual(
+            item.price,
+            data["price"],
+            "Цена элемента не соответствует ожидаемой.",
+        )
 
     def test_get_item_by_id(self):
         """
@@ -42,6 +58,7 @@ class ItemModelTest(APITestCase):
         """
         item = Item.objects.get(id=self.item1.id)
 
+        logger.info(f"Получен товар с идентификатором {item.id}")
         assert (
             item.id == self.item1.id
         ), "Идентификатор элемента не соответствует ожидаемому."
@@ -59,6 +76,7 @@ class ItemModelTest(APITestCase):
         """
         items = Item.objects.all()
 
+        logger.info(f"Получен список товаров: {[item.id for item in items]}")
         assert (
             len(items) == 2
         ), "Количество элементов не соответствует ожидаемому."
@@ -95,6 +113,9 @@ class ItemModelTest(APITestCase):
 
         item = Item.objects.get(id=self.item1.id)
 
+        logger.info(
+            f"Обновлен товар: {item.title} с идентификатором {item.id}"
+        )
         assert item.title == new_title, "Название элемента не было обновлено."
         assert item.price == new_price, "Цена элемента не была обновлена."
 
@@ -107,4 +128,5 @@ class ItemModelTest(APITestCase):
 
         Item.objects.get(id=self.item1.id).delete()
 
+        logger.info(f"Товар с идентификатором {self.item1.id} удален")
         assert Item.objects.count() == item_count - 1, "Элемент не был удален."

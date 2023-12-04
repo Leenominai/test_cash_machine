@@ -84,7 +84,7 @@ class CashMachineView(APIView):
         prefix = "_" + str(count + 1)
 
         pdfkit_options = {
-            "page-size": "A7",  # Размер страницы A7 соответствует стандартной ширине кассового чека
+            "page-size": "A7",
             "margin-top": "5mm",
             "margin-right": "5mm",
             "margin-bottom": "5mm",
@@ -179,7 +179,8 @@ class QRCodeFileView(APIView):
     Вьюсет для получения файла по его имени через сканирование QR-кода.
 
     Methods:
-        get(self, request, file_name): Обработка GET-запроса. Возвращает файл в ответ на запрос.
+        get(self, request, file_name): Обработка GET-запроса.
+        Возвращает файл в ответ на запрос.
 
     """
 
@@ -196,7 +197,8 @@ class QRCodeFileView(APIView):
             Response: Возвращает файл в ответ на запрос.
 
         Raises:
-            Response: В случае ошибки возвращает соответствующий HTTP-ответ с сообщением об ошибке.
+            Response: В случае ошибки возвращает
+            соответствующий HTTP-ответ с сообщением об ошибке.
         """
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, file_name)

@@ -18,6 +18,7 @@ class CashMachineViewTest(APITestCase):
     функциональность POST-запроса к данному эндпоинту. Предоставляет методы для
     установки начальных данных и завершения тестового класса.
     """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -76,13 +77,14 @@ class QRCodeFileViewTest(APITestCase):
     функциональность GET-запроса к данному эндпоинту. Предоставляет методы для
     установки начальных данных и завершения тестового класса.
     """
+
     def setUp(self):
         """
         Установка данных для теста.
 
         Загружает тестовый PDF-файл с использованием библиотеки pdfkit.
         """
-        pdf_content = 'This is a sample PDF content.'
+        pdf_content = "This is a sample PDF content."
         self.pdf_file_path = os.path.join(settings.MEDIA_ROOT, "test_case.pdf")
         pdfkit.from_string(pdf_content, self.pdf_file_path)
 
@@ -94,7 +96,9 @@ class QRCodeFileViewTest(APITestCase):
         Проверяет, что ответ имеет статус 200 OK, содержит изображение QR-кода
         и файл существует.
         """
-        url_get = reverse("qr_code_file", kwargs={"file_name": "test_case.pdf"})
+        url_get = reverse(
+            "qr_code_file", kwargs={"file_name": "test_case.pdf"}
+        )
         response_get = self.client.get(url_get)
 
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
