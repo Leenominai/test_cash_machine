@@ -124,13 +124,16 @@ class CashMachineView(APIView):
             После успешной генерации ведется логирование события.
         """
 
-        payment_method = "Наличные"
+        company_name = "ООО 'ОБЛАЧКО'"
+        payment_method = "Наличными"
         customer_name = "Прекрасный покупатель"
 
         total_price = sum(item.price for item in items)
 
         items_data = []
         quantity = 1
+
+        total_nds_price = total_price / 5
 
         for item in items:
             item_data = {
@@ -146,7 +149,9 @@ class CashMachineView(APIView):
             {
                 "items": items_data,
                 "total_price": total_price,
+                "total_nds_price": total_nds_price,
                 "current_time": current_time,
+                "company_name": company_name,
                 "payment_method": payment_method,
                 "customer_name": customer_name,
             },
