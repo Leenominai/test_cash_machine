@@ -208,12 +208,12 @@ class CashMachineView(APIView):
         }
 
         pdf_file_path = f"media/check_{current_time}{prefix}.pdf"
-        # pdfkit_config = pdfkit.configuration(
-        #     wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
-        # )
         pdfkit_config = pdfkit.configuration(
-            wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+            wkhtmltopdf=settings.WKHTMLTOPDF_DOCKER_PATH
         )
+        # pdfkit_config = pdfkit.configuration(
+        #     wkhtmltopdf=settings.WKHTMLTOPDF_LOCAL_PATH
+        # )
         pdfkit.from_string(
             rendered_html,
             pdf_file_path,
@@ -254,7 +254,6 @@ class CashMachineView(APIView):
         qr.add_data(f"http://{request.get_host()}/{pdf_file_path}")
         qr.make(fit=True)
 
-        # Преобразование QR-кода в PNG изображение
         img = qr.make_image(fill_color="black", back_color="white")
 
         logger.info("Файл чека в формате QR-кода успешно сгенерирован.")

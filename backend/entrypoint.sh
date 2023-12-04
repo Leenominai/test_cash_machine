@@ -5,7 +5,7 @@ poetry install
 python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
-python pytest
+poetry run pytest
 
 # Запуск Gunicorn
 exec "$@"

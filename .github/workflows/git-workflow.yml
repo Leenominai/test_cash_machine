@@ -31,7 +31,7 @@ jobs:
         with:
           context: backend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/test_cash_machine_backend
+          tags: ${{ secrets.DOCKER_USERNAME }}/test_cash_machine
 
   deploy:
     name: Deploy to server
@@ -49,7 +49,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose down
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/test_cash_machine_backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/test_cash_machine
 
             if [ -f .env ]; then
               rm .env
@@ -66,7 +66,6 @@ jobs:
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
 
             sudo docker-compose up -d
-#            sudo docker image prune -af
 
   send_message:
     name: Send message to Telegram
@@ -75,13 +74,10 @@ jobs:
 
     if: ${{ success() }}
     steps:
-      # Получение активной ветки
       - name: Get branch name
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-      # Получение активного коммита
       - name: Get commit SHA
         run: echo "COMMIT_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
-      # Отправка сообщения в канал
       - name: Send message to Telegram Channel
         uses: appleboy/telegram-action@master
         with:
