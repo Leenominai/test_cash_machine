@@ -24,6 +24,30 @@ logger = logging.getLogger(__name__)
 @extend_schema(tags=["Чек - генерация QR-кода"])
 @check_post_schema
 class CashMachineView(APIView):
+    """
+    Эндпоинт для генерации QR-кода чека.
+
+    Parameters:
+        items (list): Список идентификаторов товаров, входящих в чек.
+
+    Returns:
+        HttpResponse: Изображение QR-кода, представленное в виде HTTP-ответа.
+
+    Raises:
+        Http404: Ошибка, если один или несколько товаров не найдены.
+        Exception: В случае непредвиденной ошибки.
+
+    Примечания:
+        Данный эндпоинт принимает список идентификаторов товаров
+        в теле POST-запроса и генерирует из них чек в формате PDF
+        и соответствующий ему QR-код.
+
+    Пример POST-запроса:
+        {
+            "items": [1, 2, 3]
+        }
+    """
+
     @csrf_exempt
     def generate_html_content(self, items, current_time):
         """Генерирует HTML-код для чека."""
@@ -131,6 +155,17 @@ class CashMachineView(APIView):
 
     @csrf_exempt
     def post(self, request):
+        """
+        Обработка POST-запроса для генерации QR-кода чека.
+
+        Args:
+            request (HttpRequest): Объект запроса,
+            содержащий информацию о товарах.
+
+        Returns:
+            HttpResponse: Изображение QR-кода,
+            представленное в виде HTTP-ответа.
+        """
         try:
             items_ids = request.data.get("items", [])
             items = get_list_or_404(Item, id__in=items_ids)
@@ -159,14 +194,14 @@ class CashMachineView(APIView):
             return response
 
         except Http404 as e:
-            logger.error(f"One or more items not found: {e}")
+            logger.error(f"Один или несколько товаров не найдены: {e}")
             return Response(
-                {"error": "One or more items not found"},
+                {"error": "Один или несколько товаров не найдены"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         except Exception as e:
-            logger.exception(f"An unexpected error occurred: {e}")
+            logger.exception(f"Произошла непредвиденная ошибка: {e}")
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
