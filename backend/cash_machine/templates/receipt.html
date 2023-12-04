@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Кассовый чек</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 7px;
+        }
+        h4 {
+            text-align: center;
+            margin-top: 1px;
+            margin-bottom: 5px;
+        }
+        p {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table th, table td {
+            font-size: 12px;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        .totalany {
+            text-align: right;
+            margin-top: 7px;
+            margin-bottom: 7px;
+        }
+        .els {
+            text-align: center;
+            margin-top: 7px;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ company_name }}</h2>
+    <p>ИНН 771234567800</p>
+    <p>КПП 912345678</p>
+    <p class="els">************************************************</p>
+    <h4>Кассовый чек</h4>
+    <p>Добро пожаловать!</p>
+    <p>Время создания чека:
+        {{ current_time }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Наименование товара</th>
+                <th>Кол-во</th>
+                <th>Цена за единицу</th>
+                <th>Общая сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.total_item_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="total">Итог: ={{ total_price }}</p>
+    <p class="totalany">{{ payment_method }}: ={{ total_price }}</p>
+    <p class="totalany">Сумма НДС 20%: ={{ total_nds_price }}</p>
+    <p>Чек выдан: {{ customer_name }}</p>
+    <p class="els">************************************************</p>
+    <p>Спасибо за покупку!</p>
+</body>
+</html>

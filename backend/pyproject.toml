@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "test-cash-machine"
+version = "0.1.0"
+description = ""
+authors = ["Александр Рассыхаев <farexzon@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "test_cash_machine"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.7"
+djangorestframework = "^3.14.0"
+python-dotenv = "^1.0.0"
+drf-spectacular = "^0.26.5"
+pdfkit = "^1.0.0"
+jinja2 = "^3.1.2"
+qrcode = "^7.4.2"
+wkhtmltopdf = "^0.2"
+gunicorn = "^21.2.0"
+pillow = "^10.1.0"
+
+[tool.poetry.group.test.dependencies]
+pre-commit = "^3.5.0"
+pytest = "^7.4.3"
+pytest-django = "^4.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
