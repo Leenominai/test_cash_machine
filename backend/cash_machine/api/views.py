@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .decorators import check_post_schema, qrcode_get_schema
-from receipts.models import Item  # noqa
+from receipts.models import Item
 
 logger = logging.getLogger(__name__)
 

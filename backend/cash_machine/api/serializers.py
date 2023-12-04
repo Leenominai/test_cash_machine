@@ -1,5 +1,6 @@
-from receipts.models import Item
 from rest_framework import serializers
+
+from receipts.models import Item
 
 
 class ItemSerializer(serializers.ModelSerializer):

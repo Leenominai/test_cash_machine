@@ -17,7 +17,8 @@ check_post_schema = extend_schema_view(
         request=ItemSerializer(many=True),
         summary="Метод для генерации QR-кода.",
         description="Этот метод позволяет сгенерировать QR-код.\n\n"
-        "Используйте камеру смартфона для сканирования QR-кода из ответа на POST-запрос.\n\n"
+        "Используйте камеру смартфона для сканирования QR-кода "
+        "из ответа на POST-запрос.\n\n"
         "Пример POST-запроса:\n\n"
         "{\n\n"
         '    "items": [1, 2, 3]\n\n'
@@ -49,7 +50,8 @@ qrcode_get_schema = extend_schema_view(
         description="Этот метод позволяет получить чек через QR-код.\n\n"
         "Открытие файла через Swagger отключено, "
         "потому что он не может отображать PDF-файлы в своём интерфейсе.\n\n"
-        "Используйте камеру смартфона для сканирования QR-кода из ответа на POST-запрос.",
+        "Используйте камеру смартфона для сканирования "
+        "QR-кода из ответа на POST-запрос.",
         parameters=[
             OpenApiParameter(
                 name="file_name", type=str, location=OpenApiParameter.PATH
